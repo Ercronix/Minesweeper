@@ -15,16 +15,16 @@ public class Gameboard {
                 feld1[j] = 0;
             }
         }
-        while(hamburger<bombs){
+        while (hamburger < bombs) {
             int row = rand.nextInt(ROWS);
             int col = rand.nextInt(COLS);
-            if(feld[row][col]==0){
-                feld[row][col]=1;
+            if (feld[row][col] == 0) {
+                feld[row][col] = 1;
                 hamburger++;
             }
         }
     }
-    
+
     public void printArray() {
         for (int[] feld1 : feld) {
             for (int element : feld1) {
