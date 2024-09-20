@@ -4,15 +4,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
 public final class MainWindow implements ActionListener, MouseListener {
 
     private JFrame window;
-    private JButton button1;
     private Gameboard board;
     private JButton[][] buttonArray;
+    private final ImageIcon fieldicon = new ImageIcon(getClass().getResource("Images/Minesweeper field.png"));
+    private final ImageIcon emptyfieldicon = new ImageIcon(getClass().getResource("Images/emptyfield.png"));
+    private final ImageIcon flagicon = new ImageIcon(getClass().getResource("Images/flag.jpg"));
 
     public MainWindow(Gameboard board) {
         this.board = board;
@@ -29,7 +32,9 @@ public final class MainWindow implements ActionListener, MouseListener {
         buttonArray = new JButton[board.getFieldHeightOrWidthIdkDepends()][board.getFieldHeightOrWidthIdkDepends()];
         for (int i = 0; i < board.getFieldHeightOrWidthIdkDepends(); i++) {
             for (int j = 0; j < board.getFieldHeightOrWidthIdkDepends(); j++) {
-                JButton button = new JButton(String.valueOf(board.getCellValue(i, j)));
+                JButton button = new JButton();
+                button.setText(null);
+                button.setIcon(fieldicon);
                 window.add(button);
                 button.addMouseListener(this);
                 buttonArray[i][j] = button;
@@ -52,7 +57,7 @@ public final class MainWindow implements ActionListener, MouseListener {
             System.out.println("hallo");
         }
     }
-
+    
     @Override
     public void mouseClicked(MouseEvent e) {
         if (e.getButton() == 2) {
@@ -60,9 +65,31 @@ public final class MainWindow implements ActionListener, MouseListener {
         }
         if (e.getButton() == 1) {
             System.out.println("linke maustaste");
+            for (int i = 0; i < buttonArray.length; i++) {
+                for (int j = 0; j < buttonArray.length; j++) {
+                    if (e.getSource() == buttonArray[i][j] && (((JButton) e.getSource()).getIcon() == fieldicon)) {
+                        if ((board.getCellValue(i, j) == 9)) {
+                            System.out.println("eplosion");
+                            System.exit(0);
+                        } else {
+                            if (board.getCellValue(i, j) == 0) {
+                                buttonArray[i][j].setIcon(emptyfieldicon);
+                            } else {
+                                buttonArray[i][j].setText(String.valueOf(board.getCellValue(i, j)));
+                                buttonArray[i][j].setIcon(null);
+                            }
+                        }
+                    }
+                }
+            }
         }
         if (e.getButton() == 3) {
             System.out.println("rechte maustaste");
+            if (((JButton) e.getSource()).getIcon() != flagicon && (((JButton) e.getSource()).getText() == null)) {
+                ((JButton) e.getSource()).setIcon(flagicon);
+            } else {
+                ((JButton) e.getSource()).setIcon(fieldicon);
+            }
         }
         for (int i = 0; i < buttonArray.length; i++) {
             for (int j = 0; j < buttonArray.length; j++) {
