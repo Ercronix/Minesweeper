@@ -111,8 +111,8 @@ public class Gameboard {
                     if (closeButton.getIcon() != null && bombcount > 0 && feld[rows + i][cols + j] != 9) {
                         //wenn die Zahl im ZahlenArray 0 ist also ein leeres feld dann "leeresfeld" Icon
                         if (feld[rows + i][cols + j] == 0) {
-                            closeButton.setIcon(empty);
                             noNearbyBombExpose(rows + i, cols + j, buttonArray, empty);
+                            closeButton.setIcon(empty);
                             //wenn eine Zahl vorhanden ist die nicht 9 ist
                         } else if (feld[rows + i][cols + j] > 0 && feld[rows + i][cols + j] < 9) {
                             closeButton.setIcon(null);
