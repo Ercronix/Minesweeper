@@ -14,9 +14,10 @@ public final class MainWindow implements ActionListener, MouseListener {
     private JFrame window;
     private Gameboard board;
     private JButton[][] buttonArray;
-    private final ImageIcon fieldicon = new ImageIcon(getClass().getResource("Images/Minesweeper field.png"));
+    private final ImageIcon fieldicon = new ImageIcon(getClass().getResource("Images/ping1.png"));
     private final ImageIcon emptyfieldicon = new ImageIcon(getClass().getResource("Images/emptyfield.png"));
-    private final ImageIcon flagicon = new ImageIcon(getClass().getResource("Images/flag.jpg"));
+    private final ImageIcon flagicon = new ImageIcon(getClass().getResource("Images/t11.png"));
+    private final ImageIcon bombicon = new ImageIcon(getClass().getResource("Images/t15.png"));
 
     public MainWindow(Gameboard board) {
         this.board = board;
@@ -53,6 +54,7 @@ public final class MainWindow implements ActionListener, MouseListener {
 
     public void gameOver(){
         System.out.println("eplosion");
+        board.showBombs(bombicon, buttonArray);
         JOptionPane.showMessageDialog(window, "Game Over! You clicked on a bomb.");
         System.exit(0);
     }
@@ -92,7 +94,6 @@ public final class MainWindow implements ActionListener, MouseListener {
                             gameOver();
                         } else {
                             if (board.getCellValue(i, j) == 0) {
-                                buttonArray[i][j].setIcon(emptyfieldicon);
                                 for (JButton[] buttonArray1 : buttonArray) {
                                     for (int l = 0; l < buttonArray.length; l++) {
                                         if (e.getSource() == buttonArray1[l]) {
@@ -100,6 +101,7 @@ public final class MainWindow implements ActionListener, MouseListener {
                                         }
                                     }
                                 }
+                                buttonArray[i][j].setIcon(emptyfieldicon);
                                 i = buttonArray.length;
                                 j = buttonArray.length;
                             } else {
