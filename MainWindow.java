@@ -7,6 +7,7 @@ import java.awt.event.MouseListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 public final class MainWindow implements ActionListener, MouseListener {
 
@@ -50,6 +51,12 @@ public final class MainWindow implements ActionListener, MouseListener {
         this.board = board;
     }
 
+    public void gameOver(){
+        System.out.println("eplosion");
+        JOptionPane.showMessageDialog(window, "Game Over! You clicked on a bomb.");
+        System.exit(0);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         System.out.println("jklsdhf");
@@ -57,26 +64,39 @@ public final class MainWindow implements ActionListener, MouseListener {
             System.out.println("hallo");
         }
     }
-    
+
     @Override
     public void mouseClicked(MouseEvent e) {
         if (e.getButton() == 2) {
             System.out.println("middle maustaste");
         }
         if (e.getButton() == 1) {
-            System.out.println("linke maustaste");
+            //System.out.println("linke maustaste");
+            if (((JButton) e.getSource()).getIcon() == null) {
+                for (int i = 0; i < buttonArray.length; i++) {
+                    for (int j = 0; j < buttonArray.length; j++) {
+                        if (e.getSource() == buttonArray[i][j]) {
+                            System.out.println("Reihe:" + i + " Spalte:" + j);
+                            board.checkLeftClick(i, j, buttonArray, flagicon, emptyfieldicon);
+                        }
+                    }
+                }
+            }
             for (int i = 0; i < buttonArray.length; i++) {
                 for (int j = 0; j < buttonArray.length; j++) {
                     if (e.getSource() == buttonArray[i][j] && (((JButton) e.getSource()).getIcon() == fieldicon)) {
                         if ((board.getCellValue(i, j) == 9)) {
-                            System.out.println("eplosion");
-                            System.exit(0);
+                            gameOver();
                         } else {
                             if (board.getCellValue(i, j) == 0) {
                                 buttonArray[i][j].setIcon(emptyfieldicon);
+                                i = buttonArray.length;
+                                j = buttonArray.length;
                             } else {
                                 buttonArray[i][j].setText(String.valueOf(board.getCellValue(i, j)));
                                 buttonArray[i][j].setIcon(null);
+                                i = buttonArray.length;
+                                j = buttonArray.length;
                             }
                         }
                     }
@@ -84,22 +104,22 @@ public final class MainWindow implements ActionListener, MouseListener {
             }
         }
         if (e.getButton() == 3) {
-            System.out.println("rechte maustaste");
+            //System.out.println("rechte maustaste");
             if (((JButton) e.getSource()).getIcon() != flagicon && (((JButton) e.getSource()).getText() == null)) {
                 ((JButton) e.getSource()).setIcon(flagicon);
-            } else {
+            } else if (((JButton) e.getSource()).getIcon() != null) {
                 ((JButton) e.getSource()).setIcon(fieldicon);
             }
         }
-        for (int i = 0; i < buttonArray.length; i++) {
+    }
+
+    /*for (int i = 0; i < buttonArray.length; i++) {
             for (int j = 0; j < buttonArray.length; j++) {
                 if (e.getSource() == buttonArray[i][j]) {
                     System.out.println("Reihe:" + i + " Spalte:" + j);
                 }
             }
-        }
-    }
-
+        }*/
     @Override
     public void mousePressed(MouseEvent e) {
 

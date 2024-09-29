@@ -8,7 +8,7 @@ public class Controller {
         game.checkSurrBombs();
         game.printArray();
         MainWindow main = new MainWindow(game);
+        game.setMainWindow(main);
         main.show();
     }
-
 }
