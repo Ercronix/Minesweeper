@@ -57,6 +57,16 @@ public final class MainWindow implements ActionListener, MouseListener {
         System.exit(0);
     }
 
+    private void clickOnNumber(MouseEvent e){
+        for (int i = 0; i < buttonArray.length; i++) {
+            for (int j = 0; j < buttonArray.length; j++) {
+                if (e.getSource() == buttonArray[i][j]) {
+                    board.checkLeftClick(i, j, buttonArray, flagicon, emptyfieldicon);
+                }
+            }
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         System.out.println("jklsdhf");
@@ -73,14 +83,7 @@ public final class MainWindow implements ActionListener, MouseListener {
         if (e.getButton() == 1) {
             //System.out.println("linke maustaste");
             if (((JButton) e.getSource()).getIcon() == null) {
-                for (int i = 0; i < buttonArray.length; i++) {
-                    for (int j = 0; j < buttonArray.length; j++) {
-                        if (e.getSource() == buttonArray[i][j]) {
-                            System.out.println("Reihe:" + i + " Spalte:" + j);
-                            board.checkLeftClick(i, j, buttonArray, flagicon, emptyfieldicon);
-                        }
-                    }
-                }
+                clickOnNumber(e);
             }
             for (int i = 0; i < buttonArray.length; i++) {
                 for (int j = 0; j < buttonArray.length; j++) {
@@ -90,6 +93,13 @@ public final class MainWindow implements ActionListener, MouseListener {
                         } else {
                             if (board.getCellValue(i, j) == 0) {
                                 buttonArray[i][j].setIcon(emptyfieldicon);
+                                for (JButton[] buttonArray1 : buttonArray) {
+                                    for (int l = 0; l < buttonArray.length; l++) {
+                                        if (e.getSource() == buttonArray1[l]) {
+                                            board.noNearbyBombExpose(i, j, buttonArray, emptyfieldicon);
+                                        }
+                                    }
+                                }
                                 i = buttonArray.length;
                                 j = buttonArray.length;
                             } else {

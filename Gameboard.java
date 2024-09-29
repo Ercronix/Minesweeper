@@ -72,33 +72,72 @@ public class Gameboard {
     }
 
     public void checkLeftClick(int rows, int cols, JButton[][] buttonArray, ImageIcon flag, ImageIcon empty) {
-        int bombflag = 0;
+        int bombcount = Integer.parseInt(buttonArray[rows][cols].getText());
+        int bombchecked = 0;
+        int flagAmount = 0;
         for (int k = -1; k < 2; k++) {
             for (int l = -1; l < 2; l++) {
                 //Überprüfen ob index out of bounds
                 if (((rows + k) >= 0 && (rows + k) < feld.length && (cols + l) >= 0 && (cols + l) < feld[rows].length) && !((rows + k == rows) && (cols + l == cols))) {
                     JButton neighboringButton = buttonArray[rows + k][cols + l];
-                    if (neighboringButton.getIcon() != null && neighboringButton.getIcon().equals(flag)) {
-                        System.out.println("has flag");
-                        bombflag++;
-                        System.out.println(bombflag);
+                    //wenn ich auf eine Zahl clicke und eine falgge existiert
+                    if (neighboringButton.getIcon() != null && neighboringButton.getIcon().equals(flag) && feld[rows + k][cols + l] == 9) {
+                        System.out.println("has right flag");
+                        bombchecked++;
+                    } else if (neighboringButton.getIcon() != null && neighboringButton.getIcon().equals(flag) && feld[rows + k][cols + l] != 9) {
+                        flagAmount++;
+                        System.out.println("has wrong flag");
                     }
-                    if (feld[rows + k][cols + l] == 9 && !(neighboringButton.getIcon().equals(flag)) && bombflag > 0) {
+                    //Wenn eine falsche flagge gesetzt ist sprich flagAmount ist größer als 0
+                    if (flagAmount > 0 && bombcount == (flagAmount + bombchecked)) {
                         window.gameOver();
                     }
-                    for (int i = -1; i < 2; i++) {
-                        for (int j = -1; j < 2; j++) {
-                            if (((rows + i) >= 0 && (rows + i) < feld.length && (cols + j) >= 0 && (cols + j) < feld[rows].length) && !(j==0&&i==0)) {
-                                JButton closeButton = buttonArray[rows + i][cols + j];
-                                if (closeButton.getIcon() != null && bombflag > 0 && feld[rows + i][cols + j] != 9) {
-                                    if (feld[rows+i][cols+j] == 0) {
-                                        closeButton.setIcon(empty);
-                                    }else if(feld[rows+i][cols+j] > 0 && feld[rows+i][cols+j] < 9){
-                                        closeButton.setIcon(null);
-                                        closeButton.setText(String.valueOf(feld[rows+i][cols+j]));
-                                    }
-                                }
-                            }
+                    // die umliegenden felder freilegen
+                    if (bombchecked == bombcount) {
+                        fieldexpose(rows, cols, buttonArray, bombcount, empty);
+                    }
+                }
+            }
+        }
+    }
+
+    private void fieldexpose(int rows, int cols, JButton[][] buttonArray, int bombcount, ImageIcon empty) {
+        // durch die 8 Umliegenden Felder iterieren
+        for (int i = -1; i < 2; i++) {
+            for (int j = -1; j < 2; j++) {
+                //Check if index out of bounds
+                if (((rows + i) >= 0 && (rows + i) < feld.length && (cols + j) >= 0 && (cols + j) < feld[rows].length) && !(j == 0 && i == 0)) {
+                    JButton closeButton = buttonArray[rows + i][cols + j];
+                    //wenn ein Icon existiert und das feld keine Bombe ist
+                    if (closeButton.getIcon() != null && bombcount > 0 && feld[rows + i][cols + j] != 9) {
+                        //wenn die Zahl im ZahlenArray 0 ist also ein leeres feld dann "leeresfeld" Icon
+                        if (feld[rows + i][cols + j] == 0) {
+                            closeButton.setIcon(empty);
+                            //wenn eine Zahl vorhanden ist die nicht 9 ist
+                        } else if (feld[rows + i][cols + j] > 0 && feld[rows + i][cols + j] < 9) {
+                            closeButton.setIcon(null);
+                            closeButton.setText(String.valueOf(feld[rows + i][cols + j]));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void noNearbyBombExpose(int rows, int cols, JButton[][] buttonArray, ImageIcon empty) {
+        for (int i = -1; i < 2; i++) {
+            for (int j = -1; j < 2; j++) {
+                if (((rows + i) >= 0 && (rows + i) < feld.length && (cols + j) >= 0 && (cols + j) < feld[rows].length) && !(j == 0 && i == 0)) {
+                    JButton closeButton = buttonArray[rows + i][cols + j];
+                    //wenn ein Icon existiert und das feld keine Bombe ist
+                    if (closeButton.getIcon() != null) {
+                        //wenn die Zahl im ZahlenArray 0 ist also ein leeres feld dann "leeresfeld" Icon
+                        if (feld[rows + i][cols + j] == 0) {
+                            closeButton.setIcon(empty);
+                            //wenn eine Zahl vorhanden ist die nicht 9 ist
+                        } else if (feld[rows + i][cols + j] > 0) {
+                            closeButton.setIcon(null);
+                            closeButton.setText(String.valueOf(feld[rows + i][cols + j]));
                         }
                     }
                 }
