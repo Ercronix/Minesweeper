@@ -5,6 +5,7 @@ import javax.swing.JButton;
 
 public class Gameboard {
 
+    private int bombamount = 0;
     private final int ROWS = 10, COLS = 10;
     private final int[][] feld = new int[ROWS][COLS];
 
@@ -26,6 +27,7 @@ public class Gameboard {
 
     public void fillarray(int bombs) {
         int hamburger = 0;
+        this.bombamount = bombs;
         for (int[] feld1 : feld) {
             for (int j = 0; j < feld1.length; j++) {
                 feld1[j] = 0;
@@ -71,7 +73,8 @@ public class Gameboard {
                 // Überprüfen ob index out of bounds
                 if (((rows + k) >= 0 && (rows + k) < feld.length && (cols + l) >= 0 && (cols + l) < feld[rows].length
                         && feld[rows + k][cols + l] != feld[rows][cols])) {
-                    if (feld[rows+k][cols+l] == 9) x++;
+                    if (feld[rows + k][cols + l] == 9)
+                        x++;
                 }
             }
         }
@@ -136,9 +139,9 @@ public class Gameboard {
                             closeButton.setIcon(empty);
                             // wenn eine Zahl vorhanden ist die nicht 9 ist
                         } else if (feld[rows + i][cols + j] > 0 && feld[rows + i][cols + j] < 9) {
-                            closeButton.setIcon(window.getNumberIcons(feld[rows+i][cols+j]));
-                            //closeButton.setIcon(null);
-                            //closeButton.setText(String.valueOf(feld[rows + i][cols + j]));
+                            closeButton.setIcon(window.getNumberIcons(feld[rows + i][cols + j]));
+                            // closeButton.setIcon(null);
+                            // closeButton.setText(String.valueOf(feld[rows + i][cols + j]));
                         }
                     }
                 }
@@ -163,8 +166,8 @@ public class Gameboard {
                 // wenn eine Zahl vorhanden ist die nicht 9 ist
             } else if (feld[rows][cols] > 0) {
                 closeButton.setIcon(window.getNumberIcons(feld[rows][cols]));
-                //closeButton.setIcon(null);
-                //closeButton.setText(String.valueOf(feld[rows][cols]));
+                // closeButton.setIcon(null);
+                // closeButton.setText(String.valueOf(feld[rows][cols]));
                 return;
             }
         } else
@@ -183,11 +186,15 @@ public class Gameboard {
     }
 
     public void showBombs(ImageIcon bomb, JButton[][] buttonArray) {
+        int amount = 0;
         for (int i = 0; i < feld.length; i++) {
             for (int j = 0; j < feld[i].length; j++) {
                 if (feld[i][j] == 9) {
                     buttonArray[i][j].setIcon(bomb);
+                    amount++;
                 }
+                if (amount == bombamount)
+                    return;
             }
         }
     }

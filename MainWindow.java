@@ -104,6 +104,7 @@ public final class MainWindow implements ActionListener, MouseListener {
             for (int j = 0; j < buttonArray.length; j++) {
                 if (e.getSource() == buttonArray[i][j]) {
                     board.checkLeftClick(i, j, buttonArray, flagicon, emptyfieldicon);
+                    return;
                 }
             }
         }
@@ -142,14 +143,10 @@ public final class MainWindow implements ActionListener, MouseListener {
                                     }
                                 }
                                 buttonArray[i][j].setIcon(emptyfieldicon);
-                                i = buttonArray.length;
-                                j = buttonArray.length;
+                                return;
                             } else {
                                 buttonArray[i][j].setIcon(getNumberIcons(board.getCellValue(i, j)));
-                                //buttonArray[i][j].setText(String.valueOf(board.getCellValue(i, j)));
-                                //buttonArray[i][j].setIcon(null);
-                                i = buttonArray.length;
-                                j = buttonArray.length;
+                                return;
                             }
                         }
                     }
