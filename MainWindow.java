@@ -19,6 +19,15 @@ public final class MainWindow implements ActionListener, MouseListener {
     private final ImageIcon flagicon = new ImageIcon(getClass().getResource("Images/t11.png"));
     private final ImageIcon bombicon = new ImageIcon(getClass().getResource("Images/t15.png"));
 
+    private final ImageIcon number1Icon = new ImageIcon(getClass().getResource("Images/t1.png"));
+    private final ImageIcon number2Icon = new ImageIcon(getClass().getResource("Images/t2.png"));
+    private final ImageIcon number3Icon = new ImageIcon(getClass().getResource("Images/t3.png"));
+    private final ImageIcon number4Icon = new ImageIcon(getClass().getResource("Images/t4.png"));
+    private final ImageIcon number5Icon = new ImageIcon(getClass().getResource("Images/t5.png"));
+    private final ImageIcon number6Icon = new ImageIcon(getClass().getResource("Images/t6.png"));
+    private final ImageIcon number7Icon = new ImageIcon(getClass().getResource("Images/t7.png"));
+    private final ImageIcon number8Icon = new ImageIcon(getClass().getResource("Images/t8.png"));
+
     public MainWindow(Gameboard board) {
         this.board = board;
         initialize();
@@ -30,7 +39,8 @@ public final class MainWindow implements ActionListener, MouseListener {
         this.window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.window.setSize(800, 800);
         this.window.setLocationRelativeTo(null);
-        this.window.setLayout(new GridLayout(board.getFieldHeightOrWidthIdkDepends(), board.getFieldHeightOrWidthIdkDepends()));
+        this.window.setLayout(
+                new GridLayout(board.getFieldHeightOrWidthIdkDepends(), board.getFieldHeightOrWidthIdkDepends()));
         buttonArray = new JButton[board.getFieldHeightOrWidthIdkDepends()][board.getFieldHeightOrWidthIdkDepends()];
         for (int i = 0; i < board.getFieldHeightOrWidthIdkDepends(); i++) {
             for (int j = 0; j < board.getFieldHeightOrWidthIdkDepends(); j++) {
@@ -52,14 +62,44 @@ public final class MainWindow implements ActionListener, MouseListener {
         this.board = board;
     }
 
-    public void gameOver(){
+    public boolean hasIconCheck(JButton button) {
+        if (button.getIcon() != null)
+            return true;
+        else
+            return false;
+    }
+
+    public ImageIcon getNumberIcons(int x) {
+        switch (x) {
+            case 1:
+                return number1Icon;
+            case 2:
+                return number2Icon;
+            case 3:
+                return number3Icon;
+            case 4:
+                return number4Icon;
+            case 5:
+                return number5Icon;
+            case 6:
+                return number6Icon;
+            case 7:
+                return number7Icon;
+            case 8:
+                return number8Icon;
+            default:
+                return null;
+        }
+    }
+
+    public void gameOver() {
         System.out.println("eplosion");
         board.showBombs(bombicon, buttonArray);
         JOptionPane.showMessageDialog(window, "Game Over! You clicked on a bomb.");
         System.exit(0);
     }
 
-    private void clickOnNumber(MouseEvent e){
+    private void clickOnNumber(MouseEvent e) {
         for (int i = 0; i < buttonArray.length; i++) {
             for (int j = 0; j < buttonArray.length; j++) {
                 if (e.getSource() == buttonArray[i][j]) {
@@ -83,8 +123,8 @@ public final class MainWindow implements ActionListener, MouseListener {
             System.out.println("middle maustaste");
         }
         if (e.getButton() == 1) {
-            //System.out.println("linke maustaste");
-            if (((JButton) e.getSource()).getIcon() == null) {
+            // System.out.println("linke maustaste");
+            if (hasIconCheck(((JButton) e.getSource()))) {
                 clickOnNumber(e);
             }
             for (int i = 0; i < buttonArray.length; i++) {
@@ -105,8 +145,9 @@ public final class MainWindow implements ActionListener, MouseListener {
                                 i = buttonArray.length;
                                 j = buttonArray.length;
                             } else {
-                                buttonArray[i][j].setText(String.valueOf(board.getCellValue(i, j)));
-                                buttonArray[i][j].setIcon(null);
+                                buttonArray[i][j].setIcon(getNumberIcons(board.getCellValue(i, j)));
+                                //buttonArray[i][j].setText(String.valueOf(board.getCellValue(i, j)));
+                                //buttonArray[i][j].setIcon(null);
                                 i = buttonArray.length;
                                 j = buttonArray.length;
                             }
@@ -116,22 +157,24 @@ public final class MainWindow implements ActionListener, MouseListener {
             }
         }
         if (e.getButton() == 3) {
-            //System.out.println("rechte maustaste");
-            if (((JButton) e.getSource()).getIcon() != flagicon && (((JButton) e.getSource()).getText() == null)) {
+            // System.out.println("rechte maustaste");
+            if (((JButton) e.getSource()).getIcon() != flagicon && hasIconCheck(((JButton) e.getSource()))) {
                 ((JButton) e.getSource()).setIcon(flagicon);
-            } else if (((JButton) e.getSource()).getIcon() != null) {
+            } else if (hasIconCheck(((JButton) e.getSource()))) {
                 ((JButton) e.getSource()).setIcon(fieldicon);
             }
         }
     }
 
-    /*for (int i = 0; i < buttonArray.length; i++) {
-            for (int j = 0; j < buttonArray.length; j++) {
-                if (e.getSource() == buttonArray[i][j]) {
-                    System.out.println("Reihe:" + i + " Spalte:" + j);
-                }
-            }
-        }*/
+    /*
+     * for (int i = 0; i < buttonArray.length; i++) {
+     * for (int j = 0; j < buttonArray.length; j++) {
+     * if (e.getSource() == buttonArray[i][j]) {
+     * System.out.println("Reihe:" + i + " Spalte:" + j);
+     * }
+     * }
+     * }
+     */
     @Override
     public void mousePressed(MouseEvent e) {
 
