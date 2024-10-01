@@ -10,7 +10,7 @@ public class Gameboard {
     private final int[][] feld = new int[ROWS][COLS];
 
     Random rand = new Random();
-
+    public int wincheckNumber;
     private MainWindow window;
 
     public void setMainWindow(MainWindow window) {
@@ -24,8 +24,10 @@ public class Gameboard {
     public int getCellValue(int row, int col) {
         return feld[row][col];
     }
-
-    public void fillarray(int bombs) {
+    public int getBoardSize(){
+        return ROWS;
+    }
+    public void fillArray(int bombs) {
         int hamburger = 0;
         this.bombamount = bombs;
         for (int[] feld1 : feld) {
@@ -42,7 +44,9 @@ public class Gameboard {
             }
         }
     }
-
+    public int getBombAmount(){
+        return bombamount;
+    }
     /**
      * Methode sucht bombe und zaehlt bei den umliegenden feldern eins hoch.
      */

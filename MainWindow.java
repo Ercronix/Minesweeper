@@ -1,4 +1,7 @@
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -7,13 +10,19 @@ import java.awt.event.MouseListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 public final class MainWindow implements ActionListener, MouseListener {
 
+    private JPanel boardPanel;
     private JFrame window;
     private Gameboard board;
     private JButton[][] buttonArray;
+    private JMenuBar menuBar;
+    private JTextField bombsTextArea;
     private final ImageIcon fieldicon = new ImageIcon(getClass().getResource("Images/ping1.png"));
     private final ImageIcon emptyfieldicon = new ImageIcon(getClass().getResource("Images/emptyfield.png"));
     private final ImageIcon flagicon = new ImageIcon(getClass().getResource("Images/t11.png"));
@@ -35,23 +44,40 @@ public final class MainWindow implements ActionListener, MouseListener {
 
     public void initialize() {
         this.window = new JFrame();
+        this.menuBar = new JMenuBar();
+        this.boardPanel = new JPanel();
+        this.bombsTextArea = new JTextField(String.valueOf(board.getBombAmount()));
         this.window.setTitle("Minesweeper");
         this.window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.window.setSize(800, 800);
         this.window.setLocationRelativeTo(null);
-        this.window.setLayout(
+
+        window.setLayout(new GridBagLayout());
+        this.boardPanel.setLayout(
                 new GridLayout(board.getFieldHeightOrWidthIdkDepends(), board.getFieldHeightOrWidthIdkDepends()));
         buttonArray = new JButton[board.getFieldHeightOrWidthIdkDepends()][board.getFieldHeightOrWidthIdkDepends()];
+        window.setJMenuBar(menuBar);
+        window.add(boardPanel);
+        menuBar.add(bombsTextArea);
+        //window.add(bombsTextArea);
         for (int i = 0; i < board.getFieldHeightOrWidthIdkDepends(); i++) {
             for (int j = 0; j < board.getFieldHeightOrWidthIdkDepends(); j++) {
                 JButton button = new JButton();
                 button.setText(null);
                 button.setIcon(fieldicon);
-                window.add(button);
+                button.setPreferredSize(new Dimension(16, 16));  // Set a fixed preferred size for buttons
+                boardPanel.add(button);
                 button.addMouseListener(this);
+                //button.setEnabled(false);
+                //button.setDisabledTextColor(Color.BLACK);        // Change text color
+                button.setBackground(Color.LIGHT_GRAY);          // Change background color
+                button.setBorderPainted(false);                  // Optional: Remove border painting
                 buttonArray[i][j] = button;
             }
         }
+        bombsTextArea.addActionListener((ActionEvent e) -> {
+            updateBombs();
+        });
     }
 
     public void show() {
@@ -63,33 +89,30 @@ public final class MainWindow implements ActionListener, MouseListener {
     }
 
     public boolean hasIconCheck(JButton button) {
-        if (button.getIcon() != null)
-            return true;
-        else
-            return false;
+        return button.getIcon() != null;
     }
 
     public ImageIcon getNumberIcons(int x) {
-        switch (x) {
-            case 1:
-                return number1Icon;
-            case 2:
-                return number2Icon;
-            case 3:
-                return number3Icon;
-            case 4:
-                return number4Icon;
-            case 5:
-                return number5Icon;
-            case 6:
-                return number6Icon;
-            case 7:
-                return number7Icon;
-            case 8:
-                return number8Icon;
-            default:
-                return null;
-        }
+        return switch (x) {
+            case 1 ->
+                number1Icon;
+            case 2 ->
+                number2Icon;
+            case 3 ->
+                number3Icon;
+            case 4 ->
+                number4Icon;
+            case 5 ->
+                number5Icon;
+            case 6 ->
+                number6Icon;
+            case 7 ->
+                number7Icon;
+            case 8 ->
+                number8Icon;
+            default ->
+                null;
+        };
     }
 
     public void gameOver() {
@@ -106,6 +129,31 @@ public final class MainWindow implements ActionListener, MouseListener {
                     board.checkLeftClick(i, j, buttonArray, flagicon, emptyfieldicon);
                     return;
                 }
+            }
+        }
+    }
+
+    private void updateBombs() {
+        try {
+            int newBombs = Integer.parseInt(bombsTextArea.getText());
+            if (newBombs >= 0 && newBombs < (board.getBoardSize() * board.getBoardSize())) { // Ensure valid number of bombs
+                board.fillArray(newBombs); // Update the bomb amount in Gameboard
+                board.checkSurrBombs(); // Recalculate surrounding bombs
+                JOptionPane.showMessageDialog(window, "Bombs set to " + newBombs);
+                // Optionally, you can reinitialize the buttons or refresh the UI here
+                resetButtonIcons(); // You may need to implement this method to clear previous icons
+            } else {
+                JOptionPane.showMessageDialog(window, "Please enter a valid number of bombs.");
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(window, "Invalid input. Please enter a number.");
+        }
+    }
+
+    private void resetButtonIcons() {
+        for (JButton[] buttonArray1 : buttonArray) {
+            for (JButton button : buttonArray1) {
+                button.setIcon(fieldicon); // Reset icons to field icon
             }
         }
     }
@@ -155,9 +203,9 @@ public final class MainWindow implements ActionListener, MouseListener {
         }
         if (e.getButton() == 3) {
             // System.out.println("rechte maustaste");
-            if (((JButton) e.getSource()).getIcon() != flagicon && hasIconCheck(((JButton) e.getSource()))) {
+            if (((JButton) e.getSource()).getIcon() != flagicon && hasIconCheck(((JButton) e.getSource())) && ((JButton) e.getSource()).getIcon() == fieldicon) {
                 ((JButton) e.getSource()).setIcon(flagicon);
-            } else if (hasIconCheck(((JButton) e.getSource()))) {
+            } else if (hasIconCheck(((JButton) e.getSource()))&& ((JButton) e.getSource()).getIcon() == fieldicon) {
                 ((JButton) e.getSource()).setIcon(fieldicon);
             }
         }

@@ -2,13 +2,13 @@
 public class Controller {
 
     public static void main(String[] args) {
-        Gameboard game = new Gameboard();
         int bombs = 10;
-        game.fillarray(bombs);
-        game.checkSurrBombs();
-        game.printArray();
+        Gameboard game = new Gameboard();
+        game.fillArray(bombs);
         MainWindow main = new MainWindow(game);
         game.setMainWindow(main);
+        game.checkSurrBombs();
+        game.printArray();
         main.show();
     }
 }
