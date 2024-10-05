@@ -26,9 +26,9 @@ public final class MainWindow implements ActionListener, MouseListener {
     private JTextField sizeTextArea;
     private final ImageIcon fieldicon = new ImageIcon(getClass().getResource("Images/ping1.png"));
     private final ImageIcon emptyfieldicon = new ImageIcon(getClass().getResource("Images/emptyfield.png"));
+    private final ImageIcon emptyfieldicon2 = new ImageIcon(getClass().getResource("Images/t9.png"));
     private final ImageIcon flagicon = new ImageIcon(getClass().getResource("Images/t11.png"));
     private final ImageIcon bombicon = new ImageIcon(getClass().getResource("Images/t15.png"));
-
     private final ImageIcon number1Icon = new ImageIcon(getClass().getResource("Images/t1.png"));
     private final ImageIcon number2Icon = new ImageIcon(getClass().getResource("Images/t2.png"));
     private final ImageIcon number3Icon = new ImageIcon(getClass().getResource("Images/t3.png"));
@@ -145,7 +145,8 @@ public final class MainWindow implements ActionListener, MouseListener {
     private void updateBombs() {
         try {
             int newBombs = Integer.parseInt(bombsTextArea.getText());
-            if (newBombs >= 0 && newBombs < (board.getBoardSize() * board.getBoardSize())) { // Ensure valid number of bombs
+            if (newBombs >= 0 && newBombs < (board.getBoardSize() * board.getBoardSize())) { // Ensure valid number of
+                                                                                             // bombs
                 board.fillArray(newBombs); // Update the bomb amount in Gameboard
                 board.checkSurrBombs(); // Recalculate surrounding bombs
                 JOptionPane.showMessageDialog(window, "Bombs set to " + newBombs);
@@ -161,13 +162,13 @@ public final class MainWindow implements ActionListener, MouseListener {
     private void updateAreaSize() {
         try {
             int newSize = Integer.parseInt(sizeTextArea.getText());
-            if (newSize >= 5 && newSize <= 50) { // Ensure valid range
+            if (newSize >= 5 && newSize <= 30) { // Ensure valid range
                 JOptionPane.showMessageDialog(window, "Size set to " + newSize);
                 board.setBoardSize(newSize);
                 resetButtonIcons(); // Clear icons
                 refreshBoard(); // Update the UI
             } else {
-                JOptionPane.showMessageDialog(window, "Please enter a size between 5 and 50.");
+                JOptionPane.showMessageDialog(window, "Please enter a size between 5 and 30.");
             }
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(window, "Invalid input. Please enter a number.");
@@ -243,7 +244,8 @@ public final class MainWindow implements ActionListener, MouseListener {
         }
     }
 
-    /* Ausgabe welches Feld geclickt wurde
+    /*
+     * Ausgabe welches Feld geclickt wurde
      * for (int i = 0; i < buttonArray.length; i++) {
      * for (int j = 0; j < buttonArray.length; j++) {
      * if (e.getSource() == buttonArray[i][j]) {
@@ -254,12 +256,48 @@ public final class MainWindow implements ActionListener, MouseListener {
      */
     @Override
     public void mousePressed(MouseEvent e) {
-
+        for (int i = 0; i < buttonArray.length; i++) {
+            for (int j = 0; j < buttonArray.length; j++) {
+                if (e.getSource() == buttonArray[i][j] && buttonArray[i][j].getIcon() != flagicon
+                        && buttonArray[i][j].getIcon() != fieldicon && buttonArray[i][j].getIcon() != emptyfieldicon) {
+                    int[][] offsets = { { -1, -1 }, { -1, 0 }, { -1, 1 }, { 0, -1 }, { 0, 1 }, { 1, -1 }, { 1, 0 },
+                            { 1, 1 } };
+                    for (int[] offset : offsets) {
+                        int k = offset[0];
+                        int l = offset[1];
+                        // Check if index is out of bounds
+                        if (((i + k) >= 0 && (i + k) < buttonArray.length && (j + l) >= 0
+                                && (j + l) < buttonArray[i].length && buttonArray[i + k][j + l] != buttonArray[i][j])) {
+                            if (buttonArray[i + k][j + l].getIcon() == fieldicon)
+                                buttonArray[i + k][j + l].setIcon(emptyfieldicon2);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-
+        for (int i = 0; i < buttonArray.length; i++) {
+            for (int j = 0; j < buttonArray.length; j++) {
+                if (e.getSource() == buttonArray[i][j]) {
+                    int[][] offsets = { { -1, -1 }, { -1, 0 }, { -1, 1 }, { 0, -1 }, { 0, 1 }, { 1, -1 }, { 1, 0 },
+                            { 1, 1 } };
+                    for (int[] offset : offsets) {
+                        int k = offset[0];
+                        int l = offset[1];
+                        // Check if index is out of bounds
+                        if (((i + k) >= 0 && (i + k) < buttonArray.length && (j + l) >= 0
+                                && (j + l) < buttonArray[i].length && buttonArray[i + k][j + l] != buttonArray[i][j])) {
+                            if (buttonArray[i + k][j + l].getIcon() == emptyfieldicon2) {
+                                buttonArray[i + k][j + l].setIcon(fieldicon);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override
