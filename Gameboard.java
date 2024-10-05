@@ -17,7 +17,7 @@ public class Gameboard {
         this.window = window;
     }
 
-    public int getFieldHeightOrWidthIdkDepends() {
+    public int boardSize() {
         return ROWS;
     }
 

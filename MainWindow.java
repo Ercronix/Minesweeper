@@ -24,6 +24,7 @@ public final class MainWindow implements ActionListener, MouseListener {
     private JMenuBar menuBar;
     private JTextField bombsTextArea;
     private JTextField sizeTextArea;
+    private int flagsUsed = 0;
     private final ImageIcon fieldicon = new ImageIcon(getClass().getResource("Images/ping1.png"));
     private final ImageIcon emptyfieldicon = new ImageIcon(getClass().getResource("Images/emptyfield.png"));
     private final ImageIcon emptyfieldicon2 = new ImageIcon(getClass().getResource("Images/t9.png"));
@@ -71,11 +72,11 @@ public final class MainWindow implements ActionListener, MouseListener {
     }
 
     public void addButtons() {
-        this.boardPanel.setLayout(
-                new GridLayout(board.getFieldHeightOrWidthIdkDepends(), board.getFieldHeightOrWidthIdkDepends()));
-        buttonArray = new JButton[board.getFieldHeightOrWidthIdkDepends()][board.getFieldHeightOrWidthIdkDepends()];
-        for (int i = 0; i < board.getFieldHeightOrWidthIdkDepends(); i++) {
-            for (int j = 0; j < board.getFieldHeightOrWidthIdkDepends(); j++) {
+        int boardSize = board.boardSize();
+        this.boardPanel.setLayout(new GridLayout(boardSize, boardSize));
+        buttonArray = new JButton[boardSize][boardSize];
+        for (int i = 0; i < board.boardSize(); i++) {
+            for (int j = 0; j < board.boardSize(); j++) {
                 JButton button = new JButton();
                 button.setText(null);
                 button.setIcon(fieldicon);
@@ -100,8 +101,10 @@ public final class MainWindow implements ActionListener, MouseListener {
     public boolean hasIconCheck(JButton button) {
         return button.getIcon() != null;
     }
-    public boolean hasNumberIconCheck(JButton button){
-        if(button.getIcon() == emptyfieldicon || button.getIcon() == fieldicon || button.getIcon() == flagicon) return false;
+
+    public boolean hasNumberIconCheck(JButton button) {
+        if (button.getIcon() == emptyfieldicon || button.getIcon() == fieldicon || button.getIcon() == flagicon)
+            return false;
         return true;
     }
 
@@ -151,8 +154,8 @@ public final class MainWindow implements ActionListener, MouseListener {
     private void updateBombs() {
         try {
             int newBombs = Integer.parseInt(bombsTextArea.getText());
-            if (newBombs >= 0 && newBombs < (board.getBoardSize() * board.getBoardSize())) { // Ensure valid number of
-                                                                                             // bombs
+            int boardSize = board.boardSize();
+            if (newBombs >= 0 && newBombs < (boardSize * boardSize)) { // Ensure valid number of
                 board.fillArray(newBombs); // Update the bomb amount in Gameboard
                 board.checkSurrBombs(); // Recalculate surrounding bombs
                 JOptionPane.showMessageDialog(window, "Bombs set to " + newBombs);
@@ -171,7 +174,6 @@ public final class MainWindow implements ActionListener, MouseListener {
             if (newSize >= 5 && newSize <= 30) { // Ensure valid range
                 JOptionPane.showMessageDialog(window, "Size set to " + newSize);
                 board.setBoardSize(newSize);
-                resetButtonIcons(); // Clear icons
                 refreshBoard(); // Update the UI
             } else {
                 JOptionPane.showMessageDialog(window, "Please enter a size between 5 and 30.");
@@ -244,8 +246,11 @@ public final class MainWindow implements ActionListener, MouseListener {
             if (((JButton) e.getSource()).getIcon() != flagicon && hasIconCheck(((JButton) e.getSource()))
                     && ((JButton) e.getSource()).getIcon() == fieldicon) {
                 ((JButton) e.getSource()).setIcon(flagicon);
+                flagsUsed++; // Increment flagsUsed when a flag is placed
+                checkWinCondition(); // Check win condition after placing a flag
             } else if (hasIconCheck(((JButton) e.getSource())) && ((JButton) e.getSource()).getIcon() == flagicon) {
                 ((JButton) e.getSource()).setIcon(fieldicon);
+                flagsUsed--; // Decrement flagsUsed when a flag is removed
             }
         }
     }
@@ -281,6 +286,7 @@ public final class MainWindow implements ActionListener, MouseListener {
                                     buttonArray[i + k][j + l].setIcon(emptyfieldicon2);
                             }
                         }
+                        return;
                     }
                 }
             }
@@ -306,6 +312,7 @@ public final class MainWindow implements ActionListener, MouseListener {
                                 }
                             }
                         }
+                        return;
                     }
                 }
             }
@@ -319,5 +326,22 @@ public final class MainWindow implements ActionListener, MouseListener {
     @Override
     public void mouseExited(MouseEvent e) {
 
+    }
+    private void checkWinCondition() {
+        int bombsCount = board.getBombAmount();
+        int correctFlagsCount = 0; 
+        for (int i = 0; i < buttonArray.length; i++) {
+            for (int j = 0; j < buttonArray[i].length; j++) {
+                if (buttonArray[i][j].getIcon() == flagicon) { 
+                    if (board.getCellValue(i, j) == 9) { 
+                        correctFlagsCount++;
+                    }
+                }
+            }
+        }
+
+        if (flagsUsed == bombsCount && correctFlagsCount == bombsCount) {
+            JOptionPane.showMessageDialog(window, "Congratulations! You've correctly marked all bombs!");
+        }
     }
 }
