@@ -13,7 +13,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 public final class MainWindow implements ActionListener, MouseListener {
 
@@ -22,12 +21,13 @@ public final class MainWindow implements ActionListener, MouseListener {
     private Gameboard board;
     private JButton[][] buttonArray;
     private JMenuBar menuBar;
-    private JTextField bombsTextArea;
-    private JTextField sizeTextArea;
+    private PlaceholderTextField bombsTextArea; // Use the custom placeholder text field
+    private PlaceholderTextField sizeTextArea; // Use the custom placeholder text field
     private int flagsUsed = 0;
     private JButton resetButton;
     private JButton newBoard;
     private JPanel buttonBar;
+    private boolean firstClick = true;
     private final ImageIcon fieldicon = new ImageIcon(getClass().getResource("Images/ping1.png"));
     private final ImageIcon emptyfieldicon = new ImageIcon(getClass().getResource("Images/emptyfield.png"));
     private final ImageIcon emptyfieldicon2 = new ImageIcon(getClass().getResource("Images/t9.png"));
@@ -52,17 +52,21 @@ public final class MainWindow implements ActionListener, MouseListener {
         this.menuBar = new JMenuBar();
         this.boardPanel = new JPanel();
         this.buttonBar = new JPanel();
-        this.bombsTextArea = new JTextField(String.valueOf(board.getBombAmount()));
-        this.sizeTextArea = new JTextField(String.valueOf(board.getBoardSize()));
+        this.resetButton = new JButton();
+        this.newBoard = new JButton();
+
+        this.bombsTextArea = new PlaceholderTextField("Number of Bombs");
+        this.sizeTextArea = new PlaceholderTextField("Board Size (5-30)");
+
         this.window.setTitle("Minesweeper");
         this.window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.window.setSize(800, 800);
         this.window.setLocationRelativeTo(null);
-        this.resetButton = new JButton();
-        this.newBoard = new JButton();
+
         window.setLayout(new GridBagLayout());
         window.setJMenuBar(menuBar);
         window.add(boardPanel);
+        menuBar.setLayout(new GridLayout(1, 2));
         menuBar.add(bombsTextArea);
         menuBar.add(sizeTextArea);
         menuBar.add(buttonBar);
@@ -80,6 +84,7 @@ public final class MainWindow implements ActionListener, MouseListener {
             refreshBoard();
         });
         newBoard.addActionListener((ActionEvent e) -> {
+            firstClick = true;
             board.setBoardSize(board.getBoardSize());
             refreshBoard();
             board.printArray();
@@ -154,7 +159,8 @@ public final class MainWindow implements ActionListener, MouseListener {
         JOptionPane.showMessageDialog(window, "Game Over! You clicked on a bomb.");
         board.setBoardSize(board.getBoardSize());
         refreshBoard();
-        board.printArray();
+        System.out.println("----new Board-----");
+        firstClick = true;
     }
 
     private void clickOnNumber(MouseEvent e) {
@@ -190,6 +196,7 @@ public final class MainWindow implements ActionListener, MouseListener {
             int newSize = Integer.parseInt(sizeTextArea.getText());
             if (newSize >= 5 && newSize <= 30) { // Ensure valid range
                 JOptionPane.showMessageDialog(window, "Size set to " + newSize);
+                firstClick = true;
                 board.setBoardSize(newSize);
                 refreshBoard(); // Update the UI
             } else {
@@ -229,10 +236,13 @@ public final class MainWindow implements ActionListener, MouseListener {
             System.out.println("middle maustaste");
         }
         if (e.getButton() == 1) {
+            System.out.println(firstClick);
+            /*
+             * if (firstClick) {
+             * }
+             */
             // System.out.println("linke maustaste");
-            if (hasIconCheck(((JButton) e.getSource()))) {
-                clickOnNumber(e);
-            }
+            clickOnNumber(e);
             for (int i = 0; i < buttonArray.length; i++) {
                 for (int j = 0; j < buttonArray.length; j++) {
                     if (e.getSource() == buttonArray[i][j] && (((JButton) e.getSource()).getIcon() == fieldicon)) {
@@ -240,13 +250,7 @@ public final class MainWindow implements ActionListener, MouseListener {
                             gameOver();
                         } else {
                             if (board.getCellValue(i, j) == 0) {
-                                for (JButton[] buttonArray1 : buttonArray) {
-                                    for (int l = 0; l < buttonArray.length; l++) {
-                                        if (e.getSource() == buttonArray1[l]) {
-                                            board.noNearbyBombExpose(i, j, buttonArray, emptyfieldicon);
-                                        }
-                                    }
-                                }
+                                board.noNearbyBombExpose(i, j, buttonArray, emptyfieldicon);
                                 buttonArray[i][j].setIcon(emptyfieldicon);
                                 return;
                             } else {
@@ -271,6 +275,30 @@ public final class MainWindow implements ActionListener, MouseListener {
             }
         }
     }
+
+    /*
+     * private void firstClickCheck(MouseEvent e) {
+     * for (int z = 0; z < buttonArray.length; z++) {
+     * for (int x = 0; x < buttonArray.length; x++) {
+     * if (e.getSource() == buttonArray[z][x]) {
+     * while (firstClick) {
+     * if (board.getCellValue(z, x) == 0) {
+     * System.out.println(board.getCellValue(z, x));
+     * firstClick = false;
+     * System.out.println(firstClick);
+     * }
+     * board.fillArray(board.getBombAmount());
+     * board.setBoardSize(board.getBoardSize());
+     * refreshBoard();
+     * System.out.println("reloading");
+     * }
+     * z=buttonArray.length;
+     * x=buttonArray.length;
+     * }
+     * }
+     * }
+     * }
+     */
 
     /*
      * Ausgabe welches Feld geclickt wurde
@@ -344,13 +372,14 @@ public final class MainWindow implements ActionListener, MouseListener {
     public void mouseExited(MouseEvent e) {
 
     }
+
     private void checkWinCondition() {
         int bombsCount = board.getBombAmount();
-        int correctFlagsCount = 0; 
+        int correctFlagsCount = 0;
         for (int i = 0; i < buttonArray.length; i++) {
             for (int j = 0; j < buttonArray[i].length; j++) {
-                if (buttonArray[i][j].getIcon() == flagicon) { 
-                    if (board.getCellValue(i, j) == 9) { 
+                if (buttonArray[i][j].getIcon() == flagicon) {
+                    if (board.getCellValue(i, j) == 9) {
                         correctFlagsCount++;
                     }
                 }
