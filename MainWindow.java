@@ -25,6 +25,9 @@ public final class MainWindow implements ActionListener, MouseListener {
     private JTextField bombsTextArea;
     private JTextField sizeTextArea;
     private int flagsUsed = 0;
+    private JButton resetButton;
+    private JButton newBoard;
+    private JPanel buttonBar;
     private final ImageIcon fieldicon = new ImageIcon(getClass().getResource("Images/ping1.png"));
     private final ImageIcon emptyfieldicon = new ImageIcon(getClass().getResource("Images/emptyfield.png"));
     private final ImageIcon emptyfieldicon2 = new ImageIcon(getClass().getResource("Images/t9.png"));
@@ -48,19 +51,23 @@ public final class MainWindow implements ActionListener, MouseListener {
         this.window = new JFrame();
         this.menuBar = new JMenuBar();
         this.boardPanel = new JPanel();
+        this.buttonBar = new JPanel();
         this.bombsTextArea = new JTextField(String.valueOf(board.getBombAmount()));
-        this.sizeTextArea = new JTextField(board.getBoardSize());
+        this.sizeTextArea = new JTextField(String.valueOf(board.getBoardSize()));
         this.window.setTitle("Minesweeper");
         this.window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.window.setSize(800, 800);
         this.window.setLocationRelativeTo(null);
-
+        this.resetButton = new JButton();
+        this.newBoard = new JButton();
         window.setLayout(new GridBagLayout());
         window.setJMenuBar(menuBar);
         window.add(boardPanel);
         menuBar.add(bombsTextArea);
         menuBar.add(sizeTextArea);
-
+        menuBar.add(buttonBar);
+        buttonBar.add(resetButton);
+        buttonBar.add(newBoard);
         addButtons();
 
         bombsTextArea.addActionListener((ActionEvent e) -> {
@@ -69,12 +76,22 @@ public final class MainWindow implements ActionListener, MouseListener {
         sizeTextArea.addActionListener((ActionEvent e) -> {
             updateAreaSize();
         });
+        resetButton.addActionListener((ActionEvent e) -> {
+            refreshBoard();
+        });
+        newBoard.addActionListener((ActionEvent e) -> {
+            board.setBoardSize(board.getBoardSize());
+            refreshBoard();
+            board.printArray();
+        });
     }
 
     public void addButtons() {
         int boardSize = board.boardSize();
         this.boardPanel.setLayout(new GridLayout(boardSize, boardSize));
         buttonArray = new JButton[boardSize][boardSize];
+        resetButton.setText("Reset");
+        newBoard.setText("New Board");
         for (int i = 0; i < board.boardSize(); i++) {
             for (int j = 0; j < board.boardSize(); j++) {
                 JButton button = new JButton();

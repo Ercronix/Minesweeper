@@ -26,7 +26,7 @@ public class Gameboard {
     }
     public void setBoardSize(int rows) {
         this.ROWS = rows;
-        this.feld = new int[ROWS][ROWS]; // Ensure the array is reset
+        this.feld = new int[ROWS][ROWS]; 
         fillArray(bombamount);
         checkSurrBombs();
         //printArray();
