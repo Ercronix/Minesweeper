@@ -7,7 +7,6 @@ public class Gameboard {
 
     private int bombamount = 0;
     private int ROWS = 10;
-    private final int COLS = 10;
     private int[][] feld = new int[ROWS][ROWS];
 
     Random rand = new Random();
@@ -28,9 +27,9 @@ public class Gameboard {
     public void setBoardSize(int rows) {
         this.ROWS = rows;
         this.feld = new int[ROWS][ROWS]; // Ensure the array is reset
-        fillArray(bombamount); // Optionally, refill with the existing bomb amount
+        fillArray(bombamount);
         checkSurrBombs();
-        printArray();
+        //printArray();
         window.addButtons();
     }
     public int getBoardSize(){
@@ -46,7 +45,7 @@ public class Gameboard {
         }
         while (hamburger < bombs) {
             int row = rand.nextInt(ROWS);
-            int col = rand.nextInt(COLS);
+            int col = rand.nextInt(ROWS);
             if (feld[row][col] == 0) {
                 feld[row][col] = 9;
                 hamburger++;
@@ -153,8 +152,6 @@ public class Gameboard {
                             // wenn eine Zahl vorhanden ist die nicht 9 ist
                         } else if (feld[rows + i][cols + j] > 0 && feld[rows + i][cols + j] < 9) {
                             closeButton.setIcon(window.getNumberIcons(feld[rows + i][cols + j]));
-                            // closeButton.setIcon(null);
-                            // closeButton.setText(String.valueOf(feld[rows + i][cols + j]));
                         }
                     }
                 }
@@ -179,8 +176,6 @@ public class Gameboard {
                 // wenn eine Zahl vorhanden ist die nicht 9 ist
             } else if (feld[rows][cols] > 0) {
                 closeButton.setIcon(window.getNumberIcons(feld[rows][cols]));
-                // closeButton.setIcon(null);
-                // closeButton.setText(String.valueOf(feld[rows][cols]));
                 return;
             }
         } else

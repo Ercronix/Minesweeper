@@ -62,8 +62,6 @@ public final class MainWindow implements ActionListener, MouseListener {
 
         addButtons();
 
-        // window.add(bombsTextArea);
-
         bombsTextArea.addActionListener((ActionEvent e) -> {
             updateBombs();
         });
@@ -81,13 +79,11 @@ public final class MainWindow implements ActionListener, MouseListener {
                 JButton button = new JButton();
                 button.setText(null);
                 button.setIcon(fieldicon);
-                button.setPreferredSize(new Dimension(16, 16)); // Set a fixed preferred size for buttons
+                button.setPreferredSize(new Dimension(16, 16));
                 boardPanel.add(button);
                 button.addMouseListener(this);
-                // button.setEnabled(false);
-                // button.setDisabledTextColor(Color.BLACK); // Change text color
                 button.setBackground(Color.LIGHT_GRAY); // Change background color
-                button.setBorderPainted(false); // Optional: Remove border painting
+                button.setBorderPainted(false);
                 buttonArray[i][j] = button;
             }
         }
@@ -149,13 +145,11 @@ public final class MainWindow implements ActionListener, MouseListener {
     private void updateBombs() {
         try {
             int newBombs = Integer.parseInt(bombsTextArea.getText());
-            if (newBombs >= 0 && newBombs < (board.getBoardSize() * board.getBoardSize())) { // Ensure valid number of
-                                                                                             // bombs
+            if (newBombs >= 0 && newBombs < (board.getBoardSize() * board.getBoardSize())) { // Ensure valid number of bombs
                 board.fillArray(newBombs); // Update the bomb amount in Gameboard
                 board.checkSurrBombs(); // Recalculate surrounding bombs
                 JOptionPane.showMessageDialog(window, "Bombs set to " + newBombs);
-                // Optionally, you can reinitialize the buttons or refresh the UI here
-                resetButtonIcons(); // You may need to implement this method to clear previous icons
+                resetButtonIcons();
             } else {
                 JOptionPane.showMessageDialog(window, "Please enter a valid number of bombs.");
             }
@@ -243,13 +237,13 @@ public final class MainWindow implements ActionListener, MouseListener {
             if (((JButton) e.getSource()).getIcon() != flagicon && hasIconCheck(((JButton) e.getSource()))
                     && ((JButton) e.getSource()).getIcon() == fieldicon) {
                 ((JButton) e.getSource()).setIcon(flagicon);
-            } else if (hasIconCheck(((JButton) e.getSource())) && ((JButton) e.getSource()).getIcon() == fieldicon) {
+            } else if (hasIconCheck(((JButton) e.getSource())) && ((JButton) e.getSource()).getIcon() == flagicon) {
                 ((JButton) e.getSource()).setIcon(fieldicon);
             }
         }
     }
 
-    /*
+    /* Ausgabe welches Feld geclickt wurde
      * for (int i = 0; i < buttonArray.length; i++) {
      * for (int j = 0; j < buttonArray.length; j++) {
      * if (e.getSource() == buttonArray[i][j]) {
