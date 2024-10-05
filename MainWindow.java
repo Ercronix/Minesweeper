@@ -100,6 +100,10 @@ public final class MainWindow implements ActionListener, MouseListener {
     public boolean hasIconCheck(JButton button) {
         return button.getIcon() != null;
     }
+    public boolean hasNumberIconCheck(JButton button){
+        if(button.getIcon() == emptyfieldicon || button.getIcon() == fieldicon || button.getIcon() == flagicon) return false;
+        return true;
+    }
 
     public ImageIcon getNumberIcons(int x) {
         return switch (x) {
@@ -128,7 +132,9 @@ public final class MainWindow implements ActionListener, MouseListener {
         System.out.println("eplosion");
         board.showBombs(bombicon, buttonArray);
         JOptionPane.showMessageDialog(window, "Game Over! You clicked on a bomb.");
-        System.exit(0);
+        board.setBoardSize(board.getBoardSize());
+        refreshBoard();
+        board.printArray();
     }
 
     private void clickOnNumber(MouseEvent e) {
@@ -256,48 +262,53 @@ public final class MainWindow implements ActionListener, MouseListener {
      */
     @Override
     public void mousePressed(MouseEvent e) {
-        for (int i = 0; i < buttonArray.length; i++) {
-            for (int j = 0; j < buttonArray.length; j++) {
-                if (e.getSource() == buttonArray[i][j] && buttonArray[i][j].getIcon() != flagicon
-                        && buttonArray[i][j].getIcon() != fieldicon && buttonArray[i][j].getIcon() != emptyfieldicon) {
-                    int[][] offsets = { { -1, -1 }, { -1, 0 }, { -1, 1 }, { 0, -1 }, { 0, 1 }, { 1, -1 }, { 1, 0 },
-                            { 1, 1 } };
-                    for (int[] offset : offsets) {
-                        int k = offset[0];
-                        int l = offset[1];
-                        // Check if index is out of bounds
-                        if (((i + k) >= 0 && (i + k) < buttonArray.length && (j + l) >= 0
-                                && (j + l) < buttonArray[i].length && buttonArray[i + k][j + l] != buttonArray[i][j])) {
-                            if (buttonArray[i + k][j + l].getIcon() == fieldicon)
-                                buttonArray[i + k][j + l].setIcon(emptyfieldicon2);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        for (int i = 0; i < buttonArray.length; i++) {
-            for (int j = 0; j < buttonArray.length; j++) {
-                if (e.getSource() == buttonArray[i][j]) {
-                    int[][] offsets = { { -1, -1 }, { -1, 0 }, { -1, 1 }, { 0, -1 }, { 0, 1 }, { 1, -1 }, { 1, 0 },
-                            { 1, 1 } };
-                    for (int[] offset : offsets) {
-                        int k = offset[0];
-                        int l = offset[1];
-                        // Check if index is out of bounds
-                        if (((i + k) >= 0 && (i + k) < buttonArray.length && (j + l) >= 0
-                                && (j + l) < buttonArray[i].length && buttonArray[i + k][j + l] != buttonArray[i][j])) {
-                            if (buttonArray[i + k][j + l].getIcon() == emptyfieldicon2) {
-                                buttonArray[i + k][j + l].setIcon(fieldicon);
+        if (e.getButton() == 1)
+            for (int i = 0; i < buttonArray.length; i++) {
+                for (int j = 0; j < buttonArray.length; j++) {
+                    if (e.getSource() == buttonArray[i][j] && buttonArray[i][j].getIcon() != flagicon
+                            && buttonArray[i][j].getIcon() != fieldicon
+                            && buttonArray[i][j].getIcon() != emptyfieldicon) {
+                        int[][] offsets = { { -1, -1 }, { -1, 0 }, { -1, 1 }, { 0, -1 }, { 0, 1 }, { 1, -1 }, { 1, 0 },
+                                { 1, 1 } };
+                        for (int[] offset : offsets) {
+                            int k = offset[0];
+                            int l = offset[1];
+                            // Check if index is out of bounds
+                            if (((i + k) >= 0 && (i + k) < buttonArray.length && (j + l) >= 0
+                                    && (j + l) < buttonArray[i].length
+                                    && buttonArray[i + k][j + l] != buttonArray[i][j])) {
+                                if (buttonArray[i + k][j + l].getIcon() == fieldicon)
+                                    buttonArray[i + k][j + l].setIcon(emptyfieldicon2);
                             }
                         }
                     }
                 }
             }
-        }
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        if (e.getButton() == 1)
+            for (int i = 0; i < buttonArray.length; i++) {
+                for (int j = 0; j < buttonArray.length; j++) {
+                    if (e.getSource() == buttonArray[i][j]) {
+                        int[][] offsets = { { -1, -1 }, { -1, 0 }, { -1, 1 }, { 0, -1 }, { 0, 1 }, { 1, -1 }, { 1, 0 },
+                                { 1, 1 } };
+                        for (int[] offset : offsets) {
+                            int k = offset[0];
+                            int l = offset[1];
+                            // Check if index is out of bounds
+                            if (((i + k) >= 0 && (i + k) < buttonArray.length && (j + l) >= 0
+                                    && (j + l) < buttonArray[i].length
+                                    && buttonArray[i + k][j + l] != buttonArray[i][j])) {
+                                if (buttonArray[i + k][j + l].getIcon() == emptyfieldicon2) {
+                                    buttonArray[i + k][j + l].setIcon(fieldicon);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
     }
 
     @Override

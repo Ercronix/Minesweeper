@@ -8,7 +8,7 @@ public class Gameboard {
     private int bombamount = 0;
     private int ROWS = 10;
     private int[][] feld = new int[ROWS][ROWS];
-
+    public int discoveredFields = 0;
     Random rand = new Random();
     public int wincheckNumber;
     private MainWindow window;
@@ -124,6 +124,8 @@ public class Gameboard {
                     }
                     // Wenn eine falsche flagge gesetzt ist sprich flagAmount ist größer als 0
                     if (flagAmount > 0 && bombcount == (flagAmount + bombchecked)) {
+                        flagAmount = 0;
+                        bombcount = 0;
                         window.gameOver();
                     }
                     // die umliegenden felder freilegen
@@ -146,9 +148,11 @@ public class Gameboard {
                     if (window.hasIconCheck(closeButton) && bombcount > 0 && feld[rows + i][cols + j] != 9) {
                         // wenn die Zahl im ZahlenArray 0 ist also ein leeres feld dann "leeresfeld"
                         // Icon
-                        if (feld[rows + i][cols + j] == 0) {
+                        if (feld[rows + i][cols + j] == 0 && buttonArray[rows+i][cols+j].getIcon() != empty) {
                             noNearbyBombExpose(rows + i, cols + j, buttonArray, empty);
                             closeButton.setIcon(empty);
+                            discoveredFields++;
+                            System.out.println(discoveredFields);
                             // wenn eine Zahl vorhanden ist die nicht 9 ist
                         } else if (feld[rows + i][cols + j] > 0 && feld[rows + i][cols + j] < 9) {
                             closeButton.setIcon(window.getNumberIcons(feld[rows + i][cols + j]));
