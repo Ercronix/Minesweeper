@@ -23,6 +23,7 @@ public final class MainWindow implements ActionListener, MouseListener {
     private JButton[][] buttonArray;
     private JMenuBar menuBar;
     private JTextField bombsTextArea;
+    private JTextField sizeTextArea;
     private final ImageIcon fieldicon = new ImageIcon(getClass().getResource("Images/ping1.png"));
     private final ImageIcon emptyfieldicon = new ImageIcon(getClass().getResource("Images/emptyfield.png"));
     private final ImageIcon flagicon = new ImageIcon(getClass().getResource("Images/t11.png"));
@@ -47,37 +48,49 @@ public final class MainWindow implements ActionListener, MouseListener {
         this.menuBar = new JMenuBar();
         this.boardPanel = new JPanel();
         this.bombsTextArea = new JTextField(String.valueOf(board.getBombAmount()));
+        this.sizeTextArea = new JTextField(board.getBoardSize());
         this.window.setTitle("Minesweeper");
         this.window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.window.setSize(800, 800);
         this.window.setLocationRelativeTo(null);
 
         window.setLayout(new GridBagLayout());
-        this.boardPanel.setLayout(
-                new GridLayout(board.getFieldHeightOrWidthIdkDepends(), board.getFieldHeightOrWidthIdkDepends()));
-        buttonArray = new JButton[board.getFieldHeightOrWidthIdkDepends()][board.getFieldHeightOrWidthIdkDepends()];
         window.setJMenuBar(menuBar);
         window.add(boardPanel);
         menuBar.add(bombsTextArea);
-        //window.add(bombsTextArea);
+        menuBar.add(sizeTextArea);
+
+        addButtons();
+
+        // window.add(bombsTextArea);
+
+        bombsTextArea.addActionListener((ActionEvent e) -> {
+            updateBombs();
+        });
+        sizeTextArea.addActionListener((ActionEvent e) -> {
+            updateAreaSize();
+        });
+    }
+
+    public void addButtons() {
+        this.boardPanel.setLayout(
+                new GridLayout(board.getFieldHeightOrWidthIdkDepends(), board.getFieldHeightOrWidthIdkDepends()));
+        buttonArray = new JButton[board.getFieldHeightOrWidthIdkDepends()][board.getFieldHeightOrWidthIdkDepends()];
         for (int i = 0; i < board.getFieldHeightOrWidthIdkDepends(); i++) {
             for (int j = 0; j < board.getFieldHeightOrWidthIdkDepends(); j++) {
                 JButton button = new JButton();
                 button.setText(null);
                 button.setIcon(fieldicon);
-                button.setPreferredSize(new Dimension(16, 16));  // Set a fixed preferred size for buttons
+                button.setPreferredSize(new Dimension(16, 16)); // Set a fixed preferred size for buttons
                 boardPanel.add(button);
                 button.addMouseListener(this);
-                //button.setEnabled(false);
-                //button.setDisabledTextColor(Color.BLACK);        // Change text color
-                button.setBackground(Color.LIGHT_GRAY);          // Change background color
-                button.setBorderPainted(false);                  // Optional: Remove border painting
+                // button.setEnabled(false);
+                // button.setDisabledTextColor(Color.BLACK); // Change text color
+                button.setBackground(Color.LIGHT_GRAY); // Change background color
+                button.setBorderPainted(false); // Optional: Remove border painting
                 buttonArray[i][j] = button;
             }
         }
-        bombsTextArea.addActionListener((ActionEvent e) -> {
-            updateBombs();
-        });
     }
 
     public void show() {
@@ -136,7 +149,8 @@ public final class MainWindow implements ActionListener, MouseListener {
     private void updateBombs() {
         try {
             int newBombs = Integer.parseInt(bombsTextArea.getText());
-            if (newBombs >= 0 && newBombs < (board.getBoardSize() * board.getBoardSize())) { // Ensure valid number of bombs
+            if (newBombs >= 0 && newBombs < (board.getBoardSize() * board.getBoardSize())) { // Ensure valid number of
+                                                                                             // bombs
                 board.fillArray(newBombs); // Update the bomb amount in Gameboard
                 board.checkSurrBombs(); // Recalculate surrounding bombs
                 JOptionPane.showMessageDialog(window, "Bombs set to " + newBombs);
@@ -148,6 +162,29 @@ public final class MainWindow implements ActionListener, MouseListener {
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(window, "Invalid input. Please enter a number.");
         }
+    }
+
+    private void updateAreaSize() {
+        try {
+            int newSize = Integer.parseInt(sizeTextArea.getText());
+            if (newSize >= 5 && newSize <= 50) { // Ensure valid range
+                JOptionPane.showMessageDialog(window, "Size set to " + newSize);
+                board.setBoardSize(newSize);
+                resetButtonIcons(); // Clear icons
+                refreshBoard(); // Update the UI
+            } else {
+                JOptionPane.showMessageDialog(window, "Please enter a size between 5 and 50.");
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(window, "Invalid input. Please enter a number.");
+        }
+    }
+
+    private void refreshBoard() {
+        boardPanel.removeAll(); // Clear existing buttons
+        addButtons(); // Re-add buttons for new size
+        boardPanel.revalidate(); // Refresh the layout
+        boardPanel.repaint(); // Repaint the panel to update the UI
     }
 
     private void resetButtonIcons() {
@@ -203,9 +240,10 @@ public final class MainWindow implements ActionListener, MouseListener {
         }
         if (e.getButton() == 3) {
             // System.out.println("rechte maustaste");
-            if (((JButton) e.getSource()).getIcon() != flagicon && hasIconCheck(((JButton) e.getSource())) && ((JButton) e.getSource()).getIcon() == fieldicon) {
+            if (((JButton) e.getSource()).getIcon() != flagicon && hasIconCheck(((JButton) e.getSource()))
+                    && ((JButton) e.getSource()).getIcon() == fieldicon) {
                 ((JButton) e.getSource()).setIcon(flagicon);
-            } else if (hasIconCheck(((JButton) e.getSource()))&& ((JButton) e.getSource()).getIcon() == fieldicon) {
+            } else if (hasIconCheck(((JButton) e.getSource())) && ((JButton) e.getSource()).getIcon() == fieldicon) {
                 ((JButton) e.getSource()).setIcon(fieldicon);
             }
         }

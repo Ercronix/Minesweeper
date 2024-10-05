@@ -6,8 +6,9 @@ import javax.swing.JButton;
 public class Gameboard {
 
     private int bombamount = 0;
-    private final int ROWS = 10, COLS = 10;
-    private final int[][] feld = new int[ROWS][COLS];
+    private int ROWS = 10;
+    private final int COLS = 10;
+    private int[][] feld = new int[ROWS][ROWS];
 
     Random rand = new Random();
     public int wincheckNumber;
@@ -23,6 +24,14 @@ public class Gameboard {
 
     public int getCellValue(int row, int col) {
         return feld[row][col];
+    }
+    public void setBoardSize(int rows) {
+        this.ROWS = rows;
+        this.feld = new int[ROWS][ROWS]; // Ensure the array is reset
+        fillArray(bombamount); // Optionally, refill with the existing bomb amount
+        checkSurrBombs();
+        printArray();
+        window.addButtons();
     }
     public int getBoardSize(){
         return ROWS;
