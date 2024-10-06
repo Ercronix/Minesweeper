@@ -27,6 +27,7 @@ public final class MainWindow implements ActionListener, MouseListener {
     private JButton resetButton;
     private JButton newBoard;
     private JPanel buttonBar;
+    private int correctFlagsCount = 0;
     private boolean firstClick = true;
     private final ImageIcon fieldicon = new ImageIcon(getClass().getResource("Images/ping1.png"));
     private final ImageIcon emptyfieldicon = new ImageIcon(getClass().getResource("Images/emptyfield.png"));
@@ -85,6 +86,8 @@ public final class MainWindow implements ActionListener, MouseListener {
         });
         newBoard.addActionListener((ActionEvent e) -> {
             firstClick = true;
+            this.correctFlagsCount = 0;
+            this.flagsUsed = 0;
             board.setBoardSize(board.getBoardSize());
             refreshBoard();
             board.printArray();
@@ -125,9 +128,7 @@ public final class MainWindow implements ActionListener, MouseListener {
     }
 
     public boolean hasNumberIconCheck(JButton button) {
-        if (button.getIcon() == emptyfieldicon || button.getIcon() == fieldicon || button.getIcon() == flagicon)
-            return false;
-        return true;
+        return !(button.getIcon() == emptyfieldicon || button.getIcon() == fieldicon || button.getIcon() == flagicon);
     }
 
     public ImageIcon getNumberIcons(int x) {
@@ -375,17 +376,17 @@ public final class MainWindow implements ActionListener, MouseListener {
 
     private void checkWinCondition() {
         int bombsCount = board.getBombAmount();
-        int correctFlagsCount = 0;
+        this.correctFlagsCount = 0;
         for (int i = 0; i < buttonArray.length; i++) {
             for (int j = 0; j < buttonArray[i].length; j++) {
                 if (buttonArray[i][j].getIcon() == flagicon) {
                     if (board.getCellValue(i, j) == 9) {
                         correctFlagsCount++;
+                        System.out.println(correctFlagsCount);
                     }
                 }
             }
         }
-
         if (flagsUsed == bombsCount && correctFlagsCount == bombsCount) {
             JOptionPane.showMessageDialog(window, "Congratulations! You've correctly marked all bombs!");
         }

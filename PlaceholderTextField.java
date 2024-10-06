@@ -1,10 +1,10 @@
 
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 
 // Custom JTextField class to add placeholder functionality
 class PlaceholderTextField extends JTextField {
-    private String placeholder;
+    private final String placeholder;
 
     public PlaceholderTextField(String placeholder) {
         this.placeholder = placeholder;
